@@ -17,12 +17,10 @@ def signup_api(request):
     data = request.data
     signup = SignUpSerializer(data=data)
     if signup.is_valid():
-        user = User.objects.filter(username=data['email'])
+        user = User.objects.filter(username=data['username'])
         if not user.exists():
             User.objects.create(
-                username = data['email'],
-                first_name = data['first_name'],
-                last_name = data['last_name'],
+                username = data['username'],
                 email = data['email'],
                 password = make_password(data['password']),
             )
@@ -30,7 +28,7 @@ def signup_api(request):
                             status=status.HTTP_200_OK
                     )
         else:
-            return Response({'details':'this email is in use please change it'},
+            return Response({'details':'this username is in use please change it'},
                             status=status.HTTP_400_BAD_REQUEST
                     )
     else:
