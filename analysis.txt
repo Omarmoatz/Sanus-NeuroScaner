@@ -1,0 +1,21 @@
+authentication:
+        - login
+        - sign up
+        - reset password 
+        - forgot password
+
+about_us:
+        - name
+        - logo
+        - email_link
+        - whatsapp_num
+        - facebook_link
+    ---------
+        - articals 1
+        - articals 2
+        - articals 3
+    ---or----
+    articals:
+        -title
+        -image
+        -content --> summernote

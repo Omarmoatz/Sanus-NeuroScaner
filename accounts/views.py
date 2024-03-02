@@ -74,7 +74,7 @@ def forgot_password(request):
     send_mail(
         "Reset Password",
         f"your reset password link : {link}",
-        "omar@gmail.com",
+        "omar.moataz@gmail.com",
         [data['email']]
     )
     return Response({'detail':'sent the mail successfully'})
