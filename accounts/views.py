@@ -35,6 +35,27 @@ def signup_api(request):
         return Response(signup.errors)
     
 @api_view(['GET'])
+def login(request):
+    data = request.data
+    username = data['username']
+    password = data['password']
+
+    user = User.objects.filter(username=username)
+    if username == "" or password == "":
+        return Response({"error": "Username and password are required."},
+                         status=status.HTTP_400_BAD_REQUEST)
+    if user.exists():
+        if user.get().check_password(password):
+            return Response({'info':'loged in successfully'},
+                             status=status.HTTP_200_OK)
+        else:
+            return Response({"error":"Wrong Password"},
+                            status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return Response({"error":"This Username Does not exist"},
+                        status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['GET'])
 @permission_classes((IsAuthenticated,))
 def user_info(request):
     user = InfoSerializer(request.user).data
