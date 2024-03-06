@@ -4,9 +4,9 @@ from django.utils import timezone
 class Company(models.Model):
     name = models.CharField( max_length=100,default='default_name')
     logo = models.ImageField( upload_to='company_logo')
-    email_link = models.URLField( max_length=200, blank=True, null=True)
-    whatsapp_link = models.URLField( max_length=200, blank=True, null=True)
-    facebook_link = models.URLField( max_length=200, blank=True, null=True)
+    email = models.EmailField( max_length=300, blank=True, null=True)
+    whatsapp_link = models.URLField( max_length=300, blank=True, null=True)
+    facebook_link = models.URLField( max_length=300, blank=True, null=True)
 
     def __str__(self):
         return self.name
