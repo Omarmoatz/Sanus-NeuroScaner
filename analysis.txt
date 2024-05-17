@@ -18,4 +18,23 @@ about_us:
     articals:
         -title
         -image
-        -content --> summernote
+        -content --> summernote -or- file field
+
+Doctor:
+    -name 
+    -img
+    -graduation studies [master - Ph.D ]
+    -clink location 
+    -medical center
+    -syndicate card
+
+patient:
+    -name
+    -img
+    -date of birth
+    -doctor_id
+    -chronic diseases
+    -x_ray
+    -symptoms
+
+booking apintment:
