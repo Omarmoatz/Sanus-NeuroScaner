@@ -21,19 +21,19 @@ about_us:
         -content --> summernote -or- file field
 
 Doctor:
-    -name 
+    -user 
     -img
-    -graduation studies [master - Ph.D ]
+    -graduation studies [master شهاده الماجستير - Ph.D شهاده الدكتوراه ]
     -clink location 
-    -medical center
-    -syndicate card
+    -medical center المكان او المستشفيات الي الدكتور شغال فيها
+    -syndicate card كارنيه النقابه
 
 patient:
-    -name
+    -user
     -img
     -date of birth
     -doctor_id
-    -chronic diseases
+    -chronic diseases الامراض المزمنه
     -x_ray
     -symptoms
 
