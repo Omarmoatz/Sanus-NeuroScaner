@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import CustomUser
+from .models import CustomUser, DoctorProfile
 
 class SignUpSerializer(serializers.ModelSerializer):
     password_confirmation = serializers.CharField(max_length=20)
@@ -23,6 +23,25 @@ class SignUpSerializer(serializers.ModelSerializer):
         validated_data.pop('password_confirmation')
         return super().create(validated_data)
     
+class DoctorProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorProfile
+        fields = [
+            'img',
+            'master_degree',
+            'phd_degree',
+            'clink_location',
+            'medical_center',
+            'syndicate_card',
+        ]
+        extra_kwargs = {
+            'img': {'required': False},
+            'master_degree': {'required': True},
+            'phd_degree': {'required': False},
+            'clink_location': {'required': True},
+            'medical_center': {'required': False},
+            'syndicate_card': {'required': True},
+        }
     
 class InfoSerializer(serializers.ModelSerializer):
     class Meta:
