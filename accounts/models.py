@@ -28,11 +28,11 @@ class CustomUser(AbstractUser):
 class DoctorProfile(models.Model):
     user = models.OneToOneField(CustomUser, related_name='user_doctor', on_delete=models.CASCADE)
     img = models.ImageField( upload_to='doctor img', blank=True, null=True)
-    master_degree = models.ImageField( upload_to='master degree', blank=True, null=True)
-    phd_degree = models.ImageField( upload_to='phd degree', blank=True, null=True)
+    master_degree = models.FileField( upload_to='master degree', blank=True, null=True)
+    phd_degree = models.FileField( upload_to='phd degree', blank=True, null=True)
     clink_location = models.CharField( max_length=500, blank=True, null=True)
     medical_center = models.TextField( max_length=1000, blank=True, null=True)
-    syndicate_card = models.ImageField( upload_to='syndicate card', blank=True, null=True)
+    syndicate_card = models.FileField( upload_to='syndicate card', blank=True, null=True)
     reset_password_token = models.CharField(max_length=50, blank=True, default="")
     reset_password_expire_date = models.DateTimeField(blank=True, null=True)
 

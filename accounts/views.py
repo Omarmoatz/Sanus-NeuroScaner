@@ -4,13 +4,14 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
-from rest_framework.decorators import api_view,permission_classes
+from rest_framework.decorators import api_view,permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
-from .serializer import InfoSerializer, SignUpSerializer
-from .models import CustomUser
+from .serializer import InfoSerializer, SignUpSerializer, DoctorProfileSerializer
+from .models import CustomUser, DoctorProfile
 
 
 @api_view(['POST'])
@@ -36,22 +37,65 @@ def patient_signup(request):
 def doctor_signup(request):
     data = request.data
     signup = SignUpSerializer(data=data)
+    username = data['username']
     if signup.is_valid():
-            CustomUser.objects.create(
-                username = data['username'],
-                email = data['email'],
-                password = make_password(data['password']),
-                user_type = 'Doctor',
-                is_active = False
-            )
-            return Response({'details':'successfully created your account'},
-                            status=status.HTTP_200_OK
-                    )
+        CustomUser.objects.create(
+            username = username,
+            email = data['email'],
+            password = make_password(data['password']),
+            user_type = 'Doctor',
+            is_active = False
+        )
+        link = f"http://127.0.0.1:8000/accounts/doctor-activation/{username}/"
+
+        send_mail(
+            "acivate your account",
+            f"follow this link to activate your account : {link}",
+            "omar.moataz@gmail.com",
+            [data['email']]
+        )
+        return Response({'Details':'Successfully created your account. please follow the link to activate your account '},
+                            status=status.HTTP_200_OK)
     else:
         return Response(signup.errors,
                         status=status.HTTP_400_BAD_REQUEST)
     
-    
+@api_view(['POST'])
+def activate_doctor_profile(request,username):
+    '''
+        how to get username:
+            1- by sending it in the url
+            2- make the user enter it again 
+            3- The username can be sent in the URL and the user will enter it again to confirm.
+    '''
+    data = request.data
+    try:
+        user = CustomUser.objects.get(username=username)
+        if user.user_type != 'Doctor':
+            return Response({'detail': 'User is not a doctor'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = DoctorProfileSerializer(data=data)
+        if serializer.is_valid(): 
+                profile = user.user_doctor
+                profile.img = data.get('img', profile.img)
+                profile.master_degree = data.get('master_degree', profile.master_degree)
+                profile.phd_degree = data.get('phd_degree', profile.phd_degree)
+                profile.clink_location = data.get('clink_location', profile.clink_location)
+                profile.medical_center = data.get('medical_center', profile.medical_center)
+                profile.syndicate_card = data.get('syndicate_card', profile.syndicate_card)
+                profile.save()
+
+                user.is_active = True
+                user.save()
+                return Response({'details':'Activated your account successfully'},
+                                status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+    except CustomUser.DoesNotExist:
+        return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
 @api_view(['GET'])
 def login(request):
     data = request.data
