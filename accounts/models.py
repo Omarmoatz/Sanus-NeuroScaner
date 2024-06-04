@@ -6,16 +6,16 @@ from django.dispatch import receiver
 
 class CustomUser(AbstractUser):
     USER_TYPE_CHOICES = (
-        ('patient', 'Patient'),
-        ('doctor', 'Doctor'),
+        ('Patient', 'Patient'),
+        ('Doctor', 'Doctor'),
     )
 
     username = models.CharField(max_length=200, unique=True)
     email = models.EmailField(max_length=400)
-    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, blank=True, null=True)
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['user_type']
+    REQUIRED_FIELDS = ['email']
 
     class Meta:
         verbose_name = "User"

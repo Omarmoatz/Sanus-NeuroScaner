@@ -3,7 +3,8 @@ from . import views
 
 #   accounts/
 urlpatterns = [
-    path('signup/', views.signup_api ),
+    path('patient-signup/', views.patient_signup ),
+    path('doctor-signup/', views.doctor_signup ),
     path('login/', views.login ),
     path('get_info/', views.user_info ),
     path('update/', views.update_profile ),

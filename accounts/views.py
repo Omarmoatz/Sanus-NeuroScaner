@@ -9,30 +9,48 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from .serializer import SignUpSerializer,InfoSerializer
+from .serializer import InfoSerializer, SignUpSerializer
+from .models import CustomUser
 
 
 @api_view(['POST'])
-def signup_api(request):
+def patient_signup(request):
     data = request.data
     signup = SignUpSerializer(data=data)
-    if signup.is_valid():
-        user = User.objects.filter(username=data['username'])
-        if not user.exists():
-            User.objects.create(
+    if signup.is_valid():    
+            CustomUser.objects.create(
                 username = data['username'],
                 email = data['email'],
                 password = make_password(data['password']),
+                user_type = 'Patient'
             )
             return Response({'details':'successfully created your account'},
                             status=status.HTTP_200_OK
                     )
-        else:
-            return Response({'details':'this username is in use please change it'},
-                            status=status.HTTP_400_BAD_REQUEST
+    else:
+        return Response(signup.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['POST'])
+def doctor_signup(request):
+    data = request.data
+    signup = SignUpSerializer(data=data)
+    if signup.is_valid():
+            CustomUser.objects.create(
+                username = data['username'],
+                email = data['email'],
+                password = make_password(data['password']),
+                user_type = 'Doctor',
+                is_active = False
+            )
+            return Response({'details':'successfully created your account'},
+                            status=status.HTTP_200_OK
                     )
     else:
-        return Response(signup.errors)
+        return Response(signup.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+    
     
 @api_view(['GET'])
 def login(request):

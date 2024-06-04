@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from .models import CustomUser
 
 class SignUpSerializer(serializers.ModelSerializer):
     password_confirmation = serializers.CharField(max_length=20)
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['username','email','password','password_confirmation']
         extra_kwargs = {
             'username':{'required':True},
@@ -21,6 +22,7 @@ class SignUpSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password_confirmation')
         return super().create(validated_data)
+    
     
 class InfoSerializer(serializers.ModelSerializer):
     class Meta:
