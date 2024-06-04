@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .serializer import InfoSerializer, SignUpSerializer, DoctorProfileSerializer
+from .serializer import InfoSerializer, SignUpSerializer, DoctorProfileSerializer ,LoginSerializer
 from .models import CustomUser, DoctorProfile
 
 
@@ -99,23 +99,26 @@ def activate_doctor_profile(request,username):
 @api_view(['GET'])
 def login(request):
     data = request.data
-    username = data['username']
-    password = data['password']
 
-    user = User.objects.filter(username=username)
-    if username == "" or password == "":
-        return Response({"error": "Username and password are required."},
-                         status=status.HTTP_400_BAD_REQUEST)
-    if user.exists():
-        if user.get().check_password(password):
-            return Response({'info':'loged in successfully'},
-                             status=status.HTTP_200_OK)
+    serializer = LoginSerializer(data=data)
+    if serializer.is_valid():
+        user = User.objects.filter(username=data['username'])
+        if user.exists():           
+            password = data['password']
+            if user.get().check_password(password):
+                return Response({'info':'loged in successfully'},
+                                status=status.HTTP_200_OK)
+            else:
+                return Response({"error":"Wrong Password"},
+                                status=status.HTTP_401_UNAUTHORIZED)
         else:
-            return Response({"error":"Wrong Password"},
+            return Response({"error":"This Username Does not exist"},
                             status=status.HTTP_401_UNAUTHORIZED)
     else:
-        return Response({"error":"This Username Does not exist"},
-                        status=status.HTTP_401_UNAUTHORIZED)
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+        
+
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
