@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser,BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -17,6 +17,10 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['user_type']
 
+    class Meta:
+        verbose_name = "User"
+        verbose_name_plural = "Users"
+
     def __str__(self):
         return self.username
     
@@ -31,6 +35,7 @@ class DoctorProfile(models.Model):
     syndicate_card = models.ImageField( upload_to='syndicate card', blank=True, null=True)
     reset_password_token = models.CharField(max_length=50, blank=True, default="")
     reset_password_expire_date = models.DateTimeField(blank=True, null=True)
+
 
     def __str__(self):
         return f"{self.user.username} - Doctor Profile"
