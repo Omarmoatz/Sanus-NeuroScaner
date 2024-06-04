@@ -43,10 +43,15 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
             'syndicate_card': {'required': True},
         }
     
-class InfoSerializer(serializers.ModelSerializer):
+class PatientInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientProfile
-        fields = ['email','username']
+        exclude = ['user','doctor','reset_password_token','reset_password_expire_date']
+
+class DoctorInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorProfile
+        exclude = ['user','reset_password_token','reset_password_expire_date']
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=200)

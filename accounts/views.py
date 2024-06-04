@@ -10,8 +10,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .serializer import InfoSerializer, SignUpSerializer, DoctorProfileSerializer ,LoginSerializer
-from .models import CustomUser, DoctorProfile
+from .serializer import PatientInfoSerializer, DoctorInfoSerializer, SignUpSerializer, DoctorProfileSerializer ,LoginSerializer
+from .models import CustomUser, DoctorProfile ,PatientProfile
 
 
 @api_view(['POST'])
@@ -121,11 +121,29 @@ def login(request):
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
-def user_info(request):
-    serializer = InfoSerializer(request.user).data
-    if not serializer.is_valid():
-        return Response({'error':serializer.errors})
-    return Response({'data':serializer})
+def profile_info(request):
+    user = CustomUser.objects.get(id=request.user.id)
+    if user.user_type == 'Patient':
+        try:
+            patient_profile = PatientProfile.objects.get(user=request.user)
+        except patient_profile.DoesNotExist:
+            return Response({'detail': 'Patient profile not found'},
+                            status=status.HTTP_404_NOT_FOUND)
+        serializer = PatientInfoSerializer(patient_profile)
+    
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+    
+    elif user.user_type == 'doctor':
+        try:
+            doctorProfile = DoctorProfile.objects.get(user=request.user)
+        except doctorProfile.DoesNotExist:
+            return Response({'detail': 'Doctor profile not found'},
+                            status=status.HTTP_404_NOT_FOUND)
+        serializer = DoctorInfoSerializer(doctorProfile)
+    
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+
+
 
 
 @api_view(['PUT'])
