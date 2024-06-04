@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import CustomUser, DoctorProfile
+from .models import CustomUser, DoctorProfile ,PatientProfile
 
 class SignUpSerializer(serializers.ModelSerializer):
     password_confirmation = serializers.CharField(max_length=20)
@@ -45,7 +45,7 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
     
 class InfoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = PatientProfile
         fields = ['email','username']
 
 class LoginSerializer(serializers.Serializer):

@@ -99,10 +99,9 @@ def activate_doctor_profile(request,username):
 @api_view(['GET'])
 def login(request):
     data = request.data
-
     serializer = LoginSerializer(data=data)
     if serializer.is_valid():
-        user = User.objects.filter(username=data['username'])
+        user = CustomUser.objects.filter(username=data['username'])
         if user.exists():           
             password = data['password']
             if user.get().check_password(password):
@@ -123,8 +122,10 @@ def login(request):
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
 def user_info(request):
-    user = InfoSerializer(request.user).data
-    return Response({'data':user})
+    serializer = InfoSerializer(request.user).data
+    if not serializer.is_valid():
+        return Response({'error':serializer.errors})
+    return Response({'data':serializer})
 
 
 @api_view(['PUT'])
