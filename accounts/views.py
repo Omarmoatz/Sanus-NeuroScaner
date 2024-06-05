@@ -143,8 +143,19 @@ def profile_info(request):
     
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def patient_list(request):
+    patients = PatientProfile.objects.all()
+    serializer = PatientInfoSerializer(patients, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def doctor_list(request):
+    doctors = DoctorProfile.objects.all()
+    serializer = PatientInfoSerializer(doctors, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
