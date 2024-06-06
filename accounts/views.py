@@ -131,7 +131,7 @@ def profile_info(request):
                             status=status.HTTP_404_NOT_FOUND)
         serializer = PatientInfoSerializer(patient_profile)
     
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return Response( serializer.data, status=status.HTTP_200_OK)
     
     elif user.user_type == 'doctor':
         try:
@@ -141,7 +141,7 @@ def profile_info(request):
                             status=status.HTTP_404_NOT_FOUND)
         serializer = DoctorInfoSerializer(doctorProfile)
     
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return Response( serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -154,7 +154,7 @@ def patient_list(request):
 @permission_classes([IsAuthenticated])
 def doctor_list(request):
     doctors = DoctorProfile.objects.all()
-    serializer = PatientInfoSerializer(doctors, many=True)
+    serializer = DoctorInfoSerializer(doctors, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
@@ -163,15 +163,41 @@ def update_profile(request):
     user = request.user
     data = request.data
 
-    user.email = data['email']
-    user.username = data['username']
+    user.email = data.get('email', user.email)
+    user.username = data.get('username', user.username)
 
     if user.password != "":
-        user.password = make_password(data['password'])
-            
+        user.password = make_password(data.get('password', user.password))         
     user.save()
-    serial = InfoSerializer(user).data
-    return Response(serial)
+
+    try:
+        if user.user_type == 'Patient':
+            profile = user.user_patient
+            profile.date_of_birth = data.get('date_of_birth', profile.date_of_birth)
+            profile.chronic_diseases = data.get('chronic_diseases', profile.chronic_diseases)
+            profile.x_ray = data.get('x_ray', profile.x_ray)
+            profile.symptoms = data.get('symptoms', profile.symptoms)
+            profile.save()
+            serializer = PatientInfoSerializer(profile)
+
+        elif user.user_type == 'Doctor':
+            profile = user.user_doctor
+            profile.img = data.get('img', profile.img)
+            profile.master_degree = data.get('master_degree', profile.master_degree)
+            profile.phd_degree = data.get('phd_degree', profile.phd_degree)
+            profile.clink_location = data.get('clink_location', profile.clink_location)
+            profile.medical_center = data.get('medical_center', profile.medical_center)
+            profile.syndicate_card = data.get('syndicate_card', profile.syndicate_card)
+            profile.save()
+            serializer = DoctorInfoSerializer(profile)
+        else:
+            return Response({"detail": "Invalid user type"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
 
 @api_view(['POST'])
 def forgot_password(request):

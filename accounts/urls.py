@@ -10,7 +10,7 @@ urlpatterns = [
     path('get_info/', views.profile_info ),
     path('patient_list/', views.patient_list ),
     path('doctor_list/', views.doctor_list ),
-    path('update/', views.update_profile ),
+    path('update_profile/', views.update_profile ),
     path('forgot_password/', views.forgot_password ),
     path('reset_password/<str:token>/', views.reset_password ),
 ]
