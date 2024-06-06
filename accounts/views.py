@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from .serializer import PatientInfoSerializer, DoctorInfoSerializer, SignUpSerializer, DoctorProfileSerializer ,LoginSerializer
+from .serializer import PatientInfoSerializer, DoctorInfoSerializer, SignUpSerializer, DoctorProfileSerializer 
 from .models import CustomUser, DoctorProfile ,PatientProfile
 
 
@@ -97,23 +97,24 @@ def activate_doctor_profile(request,username):
 @api_view(['GET'])
 def login(request):
     data = request.data
-    serializer = LoginSerializer(data=data)
-    if serializer.is_valid():
-        user = CustomUser.objects.filter(username=data['username'])
-        if user.exists():           
-            password = data['password']
-            if user.get().check_password(password):
-                return Response({'info':'loged in successfully'},
-                                status=status.HTTP_200_OK)
-            else:
-                return Response({"error":"Wrong Password"},
-                                status=status.HTTP_401_UNAUTHORIZED)
+
+    if not data or 'username' not in data or 'password' not in data:
+        return Response({'error': 'please enter your username and password'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    user = CustomUser.objects.filter(username=data['username'])
+    if user.exists():           
+        password = data['password']
+        if user.get().check_password(password):
+            return Response({'info':'loged in successfully'},
+                            status=status.HTTP_200_OK)
         else:
-            return Response({"error":"This Username Does not exist"},
+            return Response({"error":"Wrong Password"},
                             status=status.HTTP_401_UNAUTHORIZED)
     else:
-        return Response(serializer.errors,
-                        status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error":"This Username Does not exist"},
+                        status=status.HTTP_401_UNAUTHORIZED)
+
         
 
 
