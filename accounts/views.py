@@ -202,14 +202,21 @@ def update_profile(request):
 @api_view(['POST'])
 def forgot_password(request):
     data = request.data
-    user = get_object_or_404(User,email=data['email'])
+
+    if not data or 'email' not in data:
+        return Response({'error': 'please enter your email'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = get_object_or_404(CustomUser, email=data['email'])
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'Email not found'}, status=status.HTTP_404_NOT_FOUND)
     
     token = get_random_string(40)
     expire_date = datetime.now() + timedelta(minutes=30)
 
-    user.user_profile.reset_password_token = token
-    user.user_profile.reset_password_expire = expire_date
-    user.user_profile.save()
+    user.reset_password_token = token
+    user.reset_password_expire = expire_date
+    user.save()
 
     link = f"http://127.0.0.1:8000/accounts/reset_password/{token}/"
 
@@ -220,6 +227,9 @@ def forgot_password(request):
         [data['email']]
     )
     return Response({'detail':'sent the mail successfully'})
+
+
+
 
 @api_view(['POST'])
 def reset_password(request,token):

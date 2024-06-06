@@ -11,11 +11,13 @@ class CustomUser(AbstractUser):
     )
 
     username = models.CharField(max_length=200, unique=True)
-    email = models.EmailField(max_length=400)
+    email = models.EmailField(max_length=400, unique=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, blank=True, null=True)
+    reset_password_token = models.CharField(max_length=50, blank=True, default="")
+    reset_password_expire_date = models.DateTimeField(blank=True, null=True)
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email', 'user_type']
 
     class Meta:
         verbose_name = "User"
@@ -33,9 +35,6 @@ class DoctorProfile(models.Model):
     clink_location = models.CharField( max_length=500, blank=True, null=True)
     medical_center = models.TextField( max_length=1000, blank=True, null=True)
     syndicate_card = models.FileField( upload_to='syndicate card', blank=True, null=True)
-    reset_password_token = models.CharField(max_length=50, blank=True, default="")
-    reset_password_expire_date = models.DateTimeField(blank=True, null=True)
-
 
     def __str__(self):
         return f"{self.user.username} - Doctor Profile"
@@ -49,8 +48,6 @@ class PatientProfile(models.Model):
     chronic_diseases = models.TextField( max_length=1000, blank=True, null=True)
     x_ray = models.ImageField( upload_to='x_ray', blank=True, null=True)
     symptoms = models.TextField( max_length=1000, blank=True, null=True)
-    reset_password_token = models.CharField(max_length=50, blank=True, default="")
-    reset_password_expire_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} - Patient Profile"
