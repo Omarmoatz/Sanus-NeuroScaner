@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from .models import CustomUser, DoctorProfile ,PatientProfile
 
 class SignUpSerializer(serializers.ModelSerializer):
-    password_confirmation = serializers.CharField(max_length=20)
+    password_confirmation = serializers.CharField(max_length=200)
     class Meta:
         model = CustomUser
         fields = ['username','email','password','password_confirmation']

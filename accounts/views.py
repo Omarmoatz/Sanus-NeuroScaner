@@ -1,14 +1,12 @@
 from datetime import datetime,timedelta
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
-from rest_framework.decorators import api_view,permission_classes, parser_classes
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
 
 from .serializer import PatientInfoSerializer, DoctorInfoSerializer, SignUpSerializer, DoctorProfileSerializer ,LoginSerializer
 from .models import CustomUser, DoctorProfile ,PatientProfile
@@ -204,7 +202,8 @@ def forgot_password(request):
     data = request.data
 
     if not data or 'email' not in data:
-        return Response({'error': 'please enter your email'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'please enter your email'},
+                         status=status.HTTP_400_BAD_REQUEST)
     
     try:
         user = get_object_or_404(CustomUser, email=data['email'])
@@ -215,7 +214,7 @@ def forgot_password(request):
     expire_date = datetime.now() + timedelta(minutes=30)
 
     user.reset_password_token = token
-    user.reset_password_expire = expire_date
+    user.reset_password_expire_date = expire_date
     user.save()
 
     link = f"http://127.0.0.1:8000/accounts/reset_password/{token}/"
@@ -234,17 +233,25 @@ def forgot_password(request):
 @api_view(['POST'])
 def reset_password(request,token):
     data = request.data
-    user = get_object_or_404(User,user_profile__reset_password_token = token)
+    user = get_object_or_404(CustomUser, reset_password_token = token)
 
+    if not data or 'password' not in data or 'confirm_password' not in data:
+        return Response({'error': 'please enter your password and confirm_password'},
+                         status=status.HTTP_400_BAD_REQUEST)
+    
+    if len(data['password']) < 8 or len(data['confirm_password']) < 8:
+        return Response({'error': 'password must be at least 8 characters'},
+                         status=status.HTTP_400_BAD_REQUEST)
+    
     if data['password'] != data['confirm_password']:
-        return Response({'error':'the passwords are not the same '})
+        return Response({'error': 'Passwords do not match.'}, status=status.HTTP_400_BAD_REQUEST)
     
-    if user.user_profile.reset_password_expire.replace(tzinfo=None) < datetime.now():
-        return Response({'error':'the token had expired'})
+    if user.reset_password_expire_date is None or user.reset_password_expire_date.replace(tzinfo=None) < datetime.now():
+        return Response({'error': 'The token has expired'}, status=status.HTTP_400_BAD_REQUEST)
     
-    user.user_profile.reset_password_token = ""
-    user.user_profile.reset_password_expire = None
-    user.user_profile.save()
+    user.reset_password_token = ""
+    user.reset_password_expire_date = None
+    user.save()
 
     user.password = make_password(data['password'])
     user.save()
