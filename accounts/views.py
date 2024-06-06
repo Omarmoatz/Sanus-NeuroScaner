@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 
 from .serializer import PatientInfoSerializer, DoctorInfoSerializer, SignUpSerializer, DoctorProfileSerializer 
 from .models import CustomUser, DoctorProfile ,PatientProfile
@@ -50,7 +51,7 @@ def doctor_signup(request):
         send_mail(
             "acivate your account",
             f"follow this link to activate your account : {link}",
-            "omar.moataz@gmail.com",
+            "omar.moataz@gmail.com", # or use this to send yo gmail : settings.EMAIL_HOST_USER
             [data['email']]
         )
         return Response({'Details':'Successfully created your account. please follow the link to activate your account '},
@@ -241,7 +242,7 @@ def forgot_password(request):
     send_mail(
         "Reset Password",
         f"your reset password link : {link}",
-        "omar.moataz@gmail.com",
+        "omar.moataz@gmail.com", # or use this to send yo gmail : settings.EMAIL_HOST_USER
         [data['email']]
     )
     return Response({'detail':'sent the mail successfully'})
