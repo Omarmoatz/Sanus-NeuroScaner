@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from django.core.exceptions import ObjectDoesNotExist
 
 from .serializer import PatientInfoSerializer, DoctorInfoSerializer, SignUpSerializer, DoctorProfileSerializer 
 from .models import CustomUser, DoctorProfile ,PatientProfile
@@ -141,13 +142,29 @@ def profile_info(request):
         serializer = DoctorInfoSerializer(doctorProfile)
     
         return Response( serializer.data, status=status.HTTP_200_OK)
+    
+    else:
+        return Response({"detail": "Invalid user type"}, status=status.HTTP_400_BAD_REQUEST)
+    
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def patient_list(request):
-    patients = PatientProfile.objects.all()
+    try:
+        doctor = request.user.user_doctor
+    except ObjectDoesNotExist:
+        return Response({'detail': 'No doctor profile found for this user'},
+                        status=status.HTTP_404_NOT_FOUND)
+    
+    patients = PatientProfile.objects.filter(doctor=doctor).all()
+
+    if not patients:
+        return Response({'detail': 'No patients found for this doctor'},
+                        status=status.HTTP_404_NOT_FOUND)
+    
     serializer = PatientInfoSerializer(patients, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -155,6 +172,7 @@ def doctor_list(request):
     doctors = DoctorProfile.objects.all()
     serializer = DoctorInfoSerializer(doctors, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])

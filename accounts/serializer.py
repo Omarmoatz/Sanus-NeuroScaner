@@ -54,11 +54,11 @@ class PatientInfoSerializer(serializers.ModelSerializer):
     doctor = serializers.StringRelatedField()
     class Meta:
         model = PatientProfile
-        exclude = ['reset_password_token','reset_password_expire_date']
+        fields = '__all__'
 
 class DoctorInfoSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
     doctor = serializers.StringRelatedField()
     class Meta:
         model = DoctorProfile
-        exclude = ['reset_password_token','reset_password_expire_date']
+        fields = '__all__'
