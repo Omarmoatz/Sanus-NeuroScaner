@@ -50,7 +50,7 @@ def doctor_signup(request):
 
         send_mail(
             "acivate your account",
-            f"follow this link to activate your account : {link}",
+            f"Welcome DR {username}.\n follow this link to activate your account --> {link}",
             "omar.moataz@gmail.com", # or use this to send yo gmail : settings.EMAIL_HOST_USER
             [data['email']]
         )
@@ -241,7 +241,7 @@ def forgot_password(request):
 
     send_mail(
         "Reset Password",
-        f"your reset password link : {link}",
+        f"Your Reset Password link : {link}",
         "omar.moataz@gmail.com", # or use this to send yo gmail : settings.EMAIL_HOST_USER
         [data['email']]
     )
