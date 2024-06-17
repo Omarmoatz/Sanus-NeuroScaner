@@ -4,8 +4,11 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Subquery , Q , OuterRef
 from django.shortcuts import get_object_or_404
 
-from .models import ChatMessage, CustomUser
+from accounts.models import PatientProfile, CustomUser
+from accounts.serializer import CustomUserSerializer
+from .models import ChatMessage
 from .serializers import ChatMessageSerializer
+
 
 class ChatList(generics.ListAPIView):
     # finding all chats between me and other users

@@ -282,3 +282,9 @@ class PatientProfileDetail(generics.RetrieveUpdateAPIView):
     serializer_class = PatientInfoSerializer
     queryset = PatientProfile.objects.all()
     permission_classes = [IsAuthenticated]
+
+class DoctorProfileDetail(generics.RetrieveUpdateAPIView):
+    serializer_class = DoctorInfoSerializer
+    queryset = DoctorProfile.objects.all()
+    permission_classes = [IsAuthenticated]
+    
