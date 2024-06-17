@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Subquery , Q , OuterRef
+from django.shortcuts import get_object_or_404
 
 from .models import ChatMessage, CustomUser
 from .serializers import ChatMessageSerializer
@@ -49,4 +50,14 @@ class GetMesseges(generics.ListAPIView):
             receiver__in = [ sender_id , receiver_id ]
         )
         return messeges
-    
+
+class SendMessege(generics.CreateAPIView):
+    serializer_class = ChatMessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        receiver_id = self.kwargs['pk']
+        receiver = get_object_or_404(CustomUser, id=receiver_id)
+        sender = self.request.user
+
+        serializer.save(sender= sender, receiver= receiver)
