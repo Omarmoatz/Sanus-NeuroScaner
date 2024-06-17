@@ -13,4 +13,7 @@ urlpatterns = [
     path('update_profile/', views.update_profile ),
     path('forgot_password/', views.forgot_password ),
     path('reset_password/<str:token>/', views.reset_password ),
+
+    # generic api 
+    path('patient_detail/<int:pk>/', views.PatientProfileDetail.as_view())
 ]

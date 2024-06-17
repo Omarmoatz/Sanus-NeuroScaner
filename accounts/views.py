@@ -5,7 +5,7 @@ from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status,generics
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
@@ -277,3 +277,8 @@ def reset_password(request,token):
     user.save()
 
     return Response({'detail':'Reset the Password Successfully'})
+
+class PatientProfileDetail(generics.RetrieveUpdateAPIView):
+    serializer_class = PatientInfoSerializer
+    queryset = PatientProfile.objects.all()
+    permission_classes = [IsAuthenticated]
