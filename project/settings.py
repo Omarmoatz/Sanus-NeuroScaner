@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # my apps
     'accounts',
     'aboutUs',
+    'chat',
 
     # 3rd part apps
     'rest_framework',
