@@ -10,4 +10,4 @@ class ChatMessage(models.Model):
     is_read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'message from {self.sender} to {self.receiver}'
+        return f'from {self.sender} to ----> {self.receiver}'

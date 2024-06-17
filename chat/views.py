@@ -16,7 +16,7 @@ class ChatList(generics.ListAPIView):
 
         # finding last messege between me and other users and order them then put there id in list 
         latest_messege = ChatMessage.objects.filter(
-            Q( sender= OuterRef('id'), recevier= user ) |
+            Q( sender= OuterRef('id'), receiver= user ) |
             Q( sender= user, receiver= OuterRef('id') )
         ).order_by('-id')[:1].values_list('id', flat=True)
 
@@ -34,4 +34,19 @@ class ChatList(generics.ListAPIView):
         ).order_by('-id')
 
         return messege
+    
+
+class GetMesseges(generics.ListAPIView):
+    serializer_class = ChatMessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        sender_id = self.request.user 
+        receiver_id = self.kwargs['receiver_id']
+
+        messeges = ChatMessage.objects.filter(
+            sender__in = [ sender_id , receiver_id ],
+            receiver__in = [ sender_id , receiver_id ]
+        )
+        return messeges
     
