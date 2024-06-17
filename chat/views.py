@@ -1,10 +1,10 @@
-from rest_framework import generics
+from rest_framework import generics,status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Subquery , Q , OuterRef
 from django.shortcuts import get_object_or_404
 
-from accounts.models import PatientProfile, CustomUser
+from accounts.models import PatientProfile, CustomUser, DoctorProfile
 from accounts.serializer import PatientInfoSerializer, DoctorInfoSerializer
 from .models import ChatMessage
 from .serializers import ChatMessageSerializer
@@ -83,8 +83,32 @@ class SearchPatient(generics.ListAPIView):
         )
 
         if not seached_user.exists():
-            return Response({'details':f'No Patient found with {username}'})
+            return Response({'details':f'No Patient found with {username}'},
+                            status=status.HTTP_404_NOT_FOUND)
         
         serializer = self.get_serializer(seached_user, many=True)
         return Response(serializer.data) 
     
+class SearchDoctor(generics.ListAPIView):
+    serializer_class = DoctorInfoSerializer
+    queryset = DoctorProfile.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        user = self.request.user 
+        username = self.kwargs['username']
+
+        seached_user = DoctorProfile.objects.filter(
+            Q(user__username__icontains = username) |
+            Q(user__email__icontains = username) |
+            Q(user__last_name__icontains = username) |
+            Q(user__first_name__icontains = username) &
+            ~Q(user = user) 
+        )
+
+        if not seached_user.exists():
+            return Response({'details':f'No doctor found with {username}'},
+                            status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = self.get_serializer(seached_user, many=True)
+        return Response(serializer.data)
