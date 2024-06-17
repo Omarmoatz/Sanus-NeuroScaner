@@ -5,7 +5,7 @@ from django.db.models import Subquery , Q , OuterRef
 from django.shortcuts import get_object_or_404
 
 from accounts.models import PatientProfile, CustomUser
-from accounts.serializer import CustomUserSerializer
+from accounts.serializer import PatientInfoSerializer, DoctorInfoSerializer
 from .models import ChatMessage
 from .serializers import ChatMessageSerializer
 
@@ -64,3 +64,27 @@ class SendMessege(generics.CreateAPIView):
         sender = self.request.user
 
         serializer.save(sender= sender, receiver= receiver)
+
+class SearchPatient(generics.ListAPIView):
+    serializer_class = PatientInfoSerializer
+    queryset = PatientProfile.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        user = self.request.user 
+        username = self.kwargs['username']
+
+        seached_user = PatientProfile.objects.filter(
+            Q(user__username__icontains = username) |
+            Q(user__email__icontains = username) |
+            Q(user__last_name__icontains = username) |
+            Q(user__first_name__icontains = username) &
+            ~Q(user = user) 
+        )
+
+        if not seached_user.exists():
+            return Response({'details':f'No Patient found with {username}'})
+        
+        serializer = self.get_serializer(seached_user, many=True)
+        return Response(serializer.data) 
+    
