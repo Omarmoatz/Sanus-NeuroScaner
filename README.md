@@ -8,18 +8,24 @@ Sanus NeuroScaner is a project that aims to detect brain defects in infants usin
 - User-friendly interface for uploading and analyzing MRI data
 - Detailed reports highlighting areas of concern in the brain
 - Ability to track patient progress over time
+- Dealing with Doctors with APIs
+- Dealing with patients with APIs
+- Direct messaging with APIs
+- Searching for patient , doctor
+- Full Authentication with APIs
+- identify potential abnormalities in brain development
 
 ## Tech Stack
 
 The project is built using the following technologies:
 
-- Python[1]
-- TensorFlow[1]
-- Keras[1]
-- NumPy[1]
-- Matplotlib[1]
-- Flask[1]
-- HTML/CSS/JavaScript[1]
+- Python
+- Django
+- Rest Framework
+- JWT
+- Machine Learning model
+- SQLite
+- HTML/CSS/JavaScript
 
 ## Installation
 
@@ -28,7 +34,7 @@ To run the project locally, follow these steps:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Omarmoatz/sanus-brain-defect.git
+git clone https://github.com/Omarmoatz/Sanus-NeuroScaner.git
 ```
 
 2. Install the required dependencies:
@@ -37,13 +43,7 @@ git clone https://github.com/Omarmoatz/sanus-brain-defect.git
 pip install -r requirements.txt
 ```
 
-3. Run the Flask application:
-
-```bash
-python app.py
-```
-
-4. Open your web browser and navigate to `http://localhost:5000` to access the application.
+4. Open your web browser and navigate to `http://localhost:8000` to access the application.
 
 ## Usage
 
