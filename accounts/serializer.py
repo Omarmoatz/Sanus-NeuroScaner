@@ -47,7 +47,7 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username','email','user_type','first_name','last_name']
+        fields = ['id','username','email','user_type','first_name','last_name']
 
 class PatientInfoSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()

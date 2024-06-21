@@ -5,7 +5,7 @@ from accounts.models import CustomUser
 class ChatMessage(models.Model):
     sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_messege')
     receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_messege')
-    message = models.TextField()
+    message = models.TextField( blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 

@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
-from .serializer import PatientInfoSerializer, DoctorInfoSerializer, SignUpSerializer, DoctorProfileSerializer 
+from .serializer import PatientInfoSerializer, DoctorInfoSerializer, SignUpSerializer, DoctorProfileSerializer,CustomUserSerializer 
 from .models import CustomUser, DoctorProfile ,PatientProfile
 
 
