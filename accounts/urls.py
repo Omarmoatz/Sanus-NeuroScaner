@@ -17,4 +17,5 @@ urlpatterns = [
     # generic api 
     path('patient_detail/<int:pk>/', views.PatientProfileDetail.as_view()),
     path('doctor_detail/<int:pk>/', views.DoctorProfileDetail.as_view()),
+    path('user_detail/<int:pk>/', views.UsereDetail.as_view()),
 ]

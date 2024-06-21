@@ -288,3 +288,7 @@ class DoctorProfileDetail(generics.RetrieveUpdateAPIView):
     queryset = DoctorProfile.objects.all()
     permission_classes = [IsAuthenticated]
     
+class UsereDetail(generics.RetrieveUpdateAPIView):
+    serializer_class = CustomUserSerializer
+    queryset = CustomUser.objects.all()
+    # permission_classes = [IsAuthenticated]
