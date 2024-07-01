@@ -2,12 +2,20 @@ from django.db import models
 
 from accounts.models import CustomUser
 
-class BrainPrediction(models.Model):
-    user = models.ForeignKey(CustomUser, related_name='user_prediction', on_delete=models.CASCADE)
-    mri_img1 = models.ImageField( upload_to='mri_img', verbose_name='mri image', blank=True, null=True)
-    mri_img2 = models.ImageField( upload_to='mri_img', verbose_name='mri image', blank=True, null=True)
-    mri_img3 = models.ImageField( upload_to='mri_img', verbose_name='mri image', blank=True, null=True)
-    prediction = models.CharField( max_length=900, blank=True, null=True)
+class Image(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='MRIimages/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{str(self.user)} gets--> {self.prediction}'
+        return str(self.user)
+
+
+class Prediction(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    images = models.ManyToManyField(Image)
+    result = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{str(self.user)} gets--> {self.result}'
