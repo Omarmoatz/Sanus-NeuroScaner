@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'accounts',
     'aboutUs',
     'chat',
+    'ml',
 
     # 3rd part apps
     'rest_framework',
