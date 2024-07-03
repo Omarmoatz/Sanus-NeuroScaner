@@ -54,7 +54,9 @@ def doctor_signup(request):
             "omar.moataz@gmail.com", # or use this to send yo gmail : settings.EMAIL_HOST_USER
             [data['email']]
         )
-        return Response({'Details':'Successfully created your account. please follow the link to activate your account '},
+        return Response({'Details':'Successfully created your account. we have sent you an email with a link to activate your account ',
+                                 'username':username,
+                                 'email':data['email']},
                             status=status.HTTP_200_OK)
     else:
         return Response(signup.errors,
@@ -87,7 +89,9 @@ def activate_doctor_profile(request,username):
 
                 user.is_active = True
                 user.save()
-                return Response({'details':'Activated your account successfully'},
+                return Response({'details':'Activated your account successfully',
+                                 'username':username,
+                                 'email':user.email},
                                 status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors,
@@ -134,7 +138,7 @@ def profile_info(request):
     
         return Response( serializer.data, status=status.HTTP_200_OK)
     
-    elif user.user_type == 'doctor':
+    elif user.user_type == 'Doctor':
         try:
             doctorProfile = DoctorProfile.objects.get(user=request.user)
         except doctorProfile.DoesNotExist:
